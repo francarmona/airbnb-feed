@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as path from 'path';
 
 export default class Server {
 
@@ -21,10 +22,16 @@ export default class Server {
   }
 
   private setupRoutes() {
+    const staticOptions = {
+      maxAge: 0
+    };
+
     this.router.get('/', function(req, res) {
       res.json({'test':'test'});
+      //res.sendFile(path.join(__dirname + '../public/index.html'));
     });
 
+    this.express.use('/js', express.static('../public/js', staticOptions));
     this.express.use('/', this.router);
   }
 
