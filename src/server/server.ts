@@ -27,11 +27,10 @@ export default class Server {
     };
 
     this.router.get('/', function(req, res) {
-      res.json({'test':'test'});
-      //res.sendFile(path.join(__dirname + '../public/index.html'));
+      res.sendFile(path.join(__dirname + '/../public/index.html'));
     });
 
-    this.express.use('/js', express.static('../public/js', staticOptions));
+    this.express.use('/js', express.static(__dirname + '/../public/js', staticOptions));
     this.express.use('/', this.router);
   }
 

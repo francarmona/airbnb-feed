@@ -3,6 +3,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var watchify = require("watchify");
 var tsify = require('tsify');
+var ts = require("gulp-typescript");
 var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
 var assign = require('lodash/assign');
@@ -20,11 +21,6 @@ var bundles = [
         output: 'main.js',
         extensions: ['main.ts'],
         destination: './dist/public/js'
-    }, {
-        entries: ['./src/server/index.ts'],
-        output: 'index.js',
-        extensions: ['.ts'],
-        destination: './dist/server'
     }
 ];
 
@@ -65,12 +61,12 @@ gulp.task('clean', function () {
     return del(['dist']);
 });
 
-gulp.task("copy-html", function () {
+gulp.task("copy-html:app", function () {
     return gulp.src(paths.pages)
         .pipe(gulp.dest("dist/public"));
 });
 
-gulp.task('bundle', function () {
+gulp.task('bundle:app', function () {
     bundles.forEach(function (bundle) {
         createBundle({
             entries: bundle.entries,
@@ -81,13 +77,23 @@ gulp.task('bundle', function () {
     });
 });
 
-gulp.task('start', function () {
+gulp.task('start:server', function () {
     nodemon({
         script: 'dist/server/index.js'
     })
-})
+});
+
+gulp.task('build:server', function (){
+    return gulp.src('src/server/*.ts')
+        .pipe(ts())
+        .pipe(gulp.dest('dist/server'));
+});
+
+gulp.task('watch:server', ['build:server'], function() {
+    gulp.watch('src/server/*.ts', ['build:server']);
+});
 
 gulp.task('serve', function () {
     isWatchify = true;
-    runSequence('clean', 'copy-html', 'bundle');
+    runSequence('clean', 'copy-html:app', 'bundle:app', 'watch:server', 'start:server');
 });
