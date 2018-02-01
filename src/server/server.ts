@@ -27,10 +27,13 @@ export default class Server {
     };
 
     this.router.get('/', function(req, res) {
-      res.sendFile(path.join(__dirname + '/../public/index.html'));
+      res.sendFile(path.join(path.resolve('./dist/public/index.html')));
     });
 
-    this.express.use('/js', express.static(__dirname + '/../public/js', staticOptions));
+    this.express.use('/js', express.static('./dist/public/js', staticOptions));
+    this.express.use('/sw.js', (req, res) => {
+      res.sendFile(path.resolve('./dist/public/sw.js'));
+    });
     this.express.use('/', this.router);
   }
 

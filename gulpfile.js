@@ -19,8 +19,14 @@ var bundles = [
     {
         entries: ['./src/public/main.ts'],
         output: 'main.js',
-        extensions: ['main.ts'],
+        extensions: ['.ts'],
         destination: './dist/public/js'
+    },
+    {
+        entries: ['./src/public/sw/index.ts'],
+        output: 'sw.js',
+        extensions: ['.ts'],
+        destination: './dist/public'
     }
 ];
 
