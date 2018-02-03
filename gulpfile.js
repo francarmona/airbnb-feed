@@ -10,6 +10,8 @@ var assign = require('lodash/assign');
 var runSequence = require('run-sequence');
 var del = require('del');
 var nodemon = require('gulp-nodemon');
+var sass = require('gulp-sass');
+var cleanCSS = require('gulp-clean-css');
 var paths = {
     pages: ['src/public/*.html']
 };
@@ -67,7 +69,7 @@ gulp.task('clean', function () {
     return del(['dist']);
 });
 
-gulp.task("copy-html:app", function () {
+gulp.task("copy-html", function () {
     return gulp.src(paths.pages)
         .pipe(gulp.dest("dist/public"));
 });
@@ -83,10 +85,40 @@ gulp.task('bundle:app', function () {
     });
 });
 
+gulp.task('sass', function () {
+    return gulp.src('./src/public/scss/**/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(gulp.dest('./dist/public/css'));
+});
+
+gulp.task("copy-manifest", function () {
+    return gulp.src('./src/public/manifest.json')
+        .pipe(gulp.dest("dist/public"));
+});
+
+gulp.task("copy-fonts", function () {
+    return gulp.src('./src/public/fonts/**')
+        .pipe(gulp.dest("dist/public/fonts"));
+});
+
+gulp.task("copy-images", function () {
+    return gulp.src('./src/public/imgs/**')
+        .pipe(gulp.dest("dist/public/imgs"));
+});
+
+gulp.task("copy-js", function () {
+    return gulp.src('./src/public/js/*.js')
+        .pipe(gulp.dest("dist/public/js"));
+});
+
 gulp.task('start:server', function () {
     nodemon({
         script: 'dist/server/index.js'
     })
+    .on('restart', function () {
+        console.log('restarted!')
+    });
 });
 
 gulp.task('build:server', function (){
@@ -95,11 +127,17 @@ gulp.task('build:server', function (){
         .pipe(gulp.dest('dist/server'));
 });
 
-gulp.task('watch:server', ['build:server'], function() {
+gulp.task('watch', function() {
     gulp.watch('src/server/*.ts', ['build:server']);
+    gulp.watch('src/public/*.html', ['copy-html']);
+    gulp.watch('src/public/scss/**/*.scss', ['sass']);
+});
+
+gulp.task('build', function () {
+    runSequence('clean', ['copy-html', 'copy-manifest', 'copy-fonts', 'copy-images', 'copy-js', 'bundle:app', 'sass', 'build:server']);
 });
 
 gulp.task('serve', function () {
     isWatchify = true;
-    runSequence('clean', 'copy-html:app', 'bundle:app', 'watch:server', 'start:server');
+    runSequence('clean', ['copy-html', 'copy-manifest', 'copy-fonts', 'copy-images', 'copy-js', 'bundle:app', 'sass', 'build:server'], ['start:server', 'watch']);
 });

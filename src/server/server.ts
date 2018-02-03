@@ -31,8 +31,13 @@ export default class Server {
     });
 
     this.express.use('/js', express.static('./dist/public/js', staticOptions));
+    this.express.use('/css', express.static('./dist/public/css', staticOptions));
+    this.express.use('/imgs', express.static('./dist/public/imgs', staticOptions));
     this.express.use('/sw.js', (req, res) => {
       res.sendFile(path.resolve('./dist/public/sw.js'));
+    });
+    this.express.use('/manifest.json', (req, res) => {
+      res.sendFile(path.resolve('./dist/public/manifest.json'));
     });
     this.express.use('/', this.router);
   }

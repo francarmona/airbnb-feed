@@ -10,7 +10,10 @@ self.addEventListener('install', event => {
     caches.open(STATIC_CACHE_NAME).then(cache => {
       return cache.addAll([
         '/',
-        'js/main.js'
+        'js/main.js',
+        'js/materialize.js',
+        'css/materialize/materialize.css',
+        'css/main.css'
       ]);
     })
   );
