@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as path from 'path';
+import Scraper from './scraper';
 
 export default class Server {
 
@@ -28,6 +29,16 @@ export default class Server {
 
     this.router.get('/', function(req, res) {
       res.sendFile(path.join(path.resolve('./dist/public/index.html')));
+    });
+
+    this.router.get('/api/houses', function(req, res) {
+      const scraper = new Scraper();
+      scraper.getHouses().then((data) => {
+        res.json(data);
+      }, (error) => {
+        res.status(400)
+          .json({ error });
+      });
     });
 
     this.express.use('/js', express.static('./dist/public/js', staticOptions));
