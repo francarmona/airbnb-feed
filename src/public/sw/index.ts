@@ -7,7 +7,7 @@ const ALL_CACHES = [
   API_CACHE
 ];
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event: any) => {
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME).then(cache => {
       return cache.addAll([
@@ -22,7 +22,7 @@ self.addEventListener('install', event => {
   );
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event: any) => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -35,7 +35,7 @@ self.addEventListener('activate', event => {
   );
 });
 
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event: any) => {
   const requestUrl = new URL(event.request.url);
 
   if (requestUrl.pathname.startsWith('/im/pictures/')) {
@@ -54,12 +54,12 @@ self.addEventListener('fetch', event => {
 });
 
 function serve(request, cacheName) {
-  return caches.open(cacheName).then(function(cache) {
-    return cache.match(request.url).then(function(response) {
+  return caches.open(cacheName).then((cache) => {
+    return cache.match(request.url).then((response) => {
       if (response) {
         return response;
       }
-      return fetch(request).then(function(networkResponse) {
+      return fetch(request).then((networkResponse) => {
         cache.put(request.url, networkResponse.clone());
         return networkResponse;
       });

@@ -4,9 +4,10 @@
   ],
   "compilerOptions": {
     "noImplicitAny": false,
-    "target": "es5",
+    "target": "es2016",
     "types": [
-      "node"
+      "node",
+      "core-js"
     ],
     "typeRoots": [
       "node_modules/@types"
