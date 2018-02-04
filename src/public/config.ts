@@ -1,4 +1,4 @@
 
 export const CONFIG = {
-  apiUrl: 'http://localhost:5000'
+  apiUrl: process.env.API_URL || 'http://localhost:5000'
 }
