@@ -8,7 +8,7 @@ import Feeder from './feeder';
 //     console.log('Service Worker registered');
 //   });
 // }
-
+//
 new Feeder();
 
 //registerServiceWorker();
