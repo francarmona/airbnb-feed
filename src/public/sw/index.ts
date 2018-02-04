@@ -1,8 +1,10 @@
 const STATIC_CACHE_NAME = 'airbnb-feed-static-v1';
 const CONTENT_IMAGES_CACHE = 'airbnb-feed-content-images';
+const API_CACHE = 'airbnb-feed-api';
 const ALL_CACHES = [
   STATIC_CACHE_NAME,
-  CONTENT_IMAGES_CACHE
+  CONTENT_IMAGES_CACHE,
+  API_CACHE
 ];
 
 self.addEventListener('install', event => {
@@ -10,7 +12,11 @@ self.addEventListener('install', event => {
     caches.open(STATIC_CACHE_NAME).then(cache => {
       return cache.addAll([
         '/',
-        'js/main.js'
+        'js/main.js',
+        'js/materialize.js',
+        'css/materialize/materialize.css',
+        'css/main.css',
+        'imgs/logo.png'
       ]);
     })
   );
@@ -32,19 +38,31 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url);
 
-  if (requestUrl.origin === location.origin) {
-    if (requestUrl.pathname === '/') {
-      event.respondWith(caches.match('index.html'));
-      return;
-    }
+  if (requestUrl.pathname.startsWith('/im/pictures/')) {
+    event.respondWith(serve(event.request, CONTENT_IMAGES_CACHE));
+    return;
   }
 
-  /*if (requestUrl.pathname.startsWith('/photos/')) {
-    event.respondWith(servePhoto(event.request));
+  if (requestUrl.pathname.includes('/api/v1/')) {
+    event.respondWith(serve(event.request, API_CACHE));
     return;
-  }*/
+  }
 
   event.respondWith(
     caches.match(event.request).then((response) => response || fetch(event.request))
   );
 });
+
+function serve(request, cacheName) {
+  return caches.open(cacheName).then(function(cache) {
+    return cache.match(request.url).then(function(response) {
+      if (response) {
+        return response;
+      }
+      return fetch(request).then(function(networkResponse) {
+        cache.put(request.url, networkResponse.clone());
+        return networkResponse;
+      });
+    });
+  });
+}

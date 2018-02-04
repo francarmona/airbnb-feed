@@ -1,0 +1,23 @@
+
+.loader {
+  position: absolute;
+  top :0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.card-content {
+  .card-title {
+    font-size: 17px;
+  }
+
+  .price {
+    padding-top: 5px;
+  }
+
+  p {
+    font-size: 13px;
+  }
+}

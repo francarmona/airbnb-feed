@@ -4,7 +4,9 @@
   "description": "A basic airbnb feed",
   "main": "./dist/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build",
+    "serve": "gulp serve"
   },
   "keywords": [
     "airbnb",
@@ -21,7 +23,9 @@
     "del": "^3.0.0",
     "express": "^4.16.2",
     "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.2",
     "gulp-nodemon": "^2.2.1",
+    "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^3.2.4",
     "gulp-uglify": "^3.0.0",
@@ -33,5 +37,9 @@
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.10.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.83.0"
   }
 }
