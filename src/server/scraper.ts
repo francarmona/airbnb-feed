@@ -31,14 +31,14 @@ export default class Scraper {
               image: $('div._1fdzqn44',element).prop('style')['background-image'].replace('url(','').replace(')',''),
               title: piece.eq(0).find('div div span').text().replace(' ·  · ',''),
               subtitle: piece.eq(1).find('._1qp0hqb').text(),
-              price: piece.eq(2).find('div._1yarz4r').html()
+              price: piece.eq(2).find('div._1yarz4r').html(),
+              price: `${piece.eq(2).find('div._1yarz4r span div._36rlri > span._hylizj6').text()} ${piece.eq(2).find('div._1yarz4r > span > span').eq(0).children().eq(1).children().eq(0).children().eq(1).text()} ${piece.eq(2).find('div._1yarz4r > span').children().eq(1).text().toLowerCase()}`
             });
           });
           fs.writeFile('./dist/server/houses.json', JSON.stringify(this.houses));
           resolve(this.houses);
         } else {
           let rawHouses = fs.readFileSync('./dist/server/houses.json');
-          console.log('loaded from file',JSON.parse(rawHouses));
           resolve(JSON.parse(rawHouses));
         }
       });

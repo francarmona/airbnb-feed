@@ -41,11 +41,12 @@ export default class Feeder {
                   <div class="card-image">
                     <img src="${house.image}">
                   </div>
-                  <div class="card-content">
-                    <span class="card-title grey-text text-darken-4">${house.title}</span>
-                    <p>${house.subtitle}</p>
-                    <div>${house.price}</div>
-                    <p><a href="${house.link}">Ir a Airbnb...</a></p>
+                  <div class="card-content hoverable">
+                    <a href="${house.link}">
+                      <div class="card-title grey-text text-darken-4 truncate">${house.subtitle}</div>
+                      <p class="blue-text">${house.title}</p>
+                      <div class="grey-text text-darken-3 price">${house.price}</div>
+                    </a>
                   </div>
                 </div>
               </div>

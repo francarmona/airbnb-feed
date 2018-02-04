@@ -13,7 +13,9 @@ self.addEventListener('install', event => {
         'js/main.js',
         'js/materialize.js',
         'css/materialize/materialize.css',
-        'css/main.css'
+        'css/main.css',
+        'imgs/logo.png',
+        'api/v1/houses'
       ]);
     })
   );
@@ -35,19 +37,26 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url);
 
-  if (requestUrl.origin === location.origin) {
-    if (requestUrl.pathname === '/') {
-      event.respondWith(caches.match('index.html'));
-      return;
-    }
-  }
-
-  /*if (requestUrl.pathname.startsWith('/photos/')) {
-    event.respondWith(servePhoto(event.request));
+  if (requestUrl.pathname.startsWith('/im/pictures/')) {
+    event.respondWith(serveImage(event.request));
     return;
-  }*/
+  }
 
   event.respondWith(
     caches.match(event.request).then((response) => response || fetch(event.request))
   );
 });
+
+function serveImage(request) {
+  return caches.open(CONTENT_IMAGES_CACHE).then(function(cache) {
+    return cache.match(request.url).then(function(response) {
+      if (response) {
+        return response;
+      }
+      return fetch(request).then(function(networkResponse) {
+        cache.put(storageUrl, networkResponse.clone());
+        return networkResponse;
+      });
+    });
+  });
+}

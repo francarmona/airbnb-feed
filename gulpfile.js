@@ -69,7 +69,7 @@ gulp.task('clean', function () {
     return del(['dist']);
 });
 
-gulp.task("copy-html", function () {
+gulp.task("copy:html", function () {
     return gulp.src(paths.pages)
         .pipe(gulp.dest("dist/public"));
 });
@@ -92,24 +92,29 @@ gulp.task('sass', function () {
         .pipe(gulp.dest('./dist/public/css'));
 });
 
-gulp.task("copy-manifest", function () {
+gulp.task("copy:manifest", function () {
     return gulp.src('./src/public/manifest.json')
         .pipe(gulp.dest("dist/public"));
 });
 
-gulp.task("copy-fonts", function () {
+gulp.task("copy:fonts", function () {
     return gulp.src('./src/public/fonts/**')
         .pipe(gulp.dest("dist/public/fonts"));
 });
 
-gulp.task("copy-images", function () {
+gulp.task("copy:images", function () {
     return gulp.src('./src/public/imgs/**')
         .pipe(gulp.dest("dist/public/imgs"));
 });
 
-gulp.task("copy-js", function () {
+gulp.task("copy:js", function () {
     return gulp.src('./src/public/js/*.js')
         .pipe(gulp.dest("dist/public/js"));
+});
+
+gulp.task("copy:json", function () {
+    return gulp.src('./src/server/json/*.json')
+        .pipe(gulp.dest("dist/server"));
 });
 
 gulp.task('start:server', function () {
@@ -129,15 +134,19 @@ gulp.task('build:server', function (){
 
 gulp.task('watch', function() {
     gulp.watch('src/server/*.ts', ['build:server']);
-    gulp.watch('src/public/*.html', ['copy-html']);
+    gulp.watch('src/public/*.html', ['copy:html']);
     gulp.watch('src/public/scss/**/*.scss', ['sass']);
 });
 
+gulp.task('copy:all', function(){
+    runSequence('copy:html', 'copy:manifest', 'copy:fonts', 'copy:images', 'copy:js', 'copy:json');
+});
+
 gulp.task('build', function () {
-    runSequence('clean', ['copy-html', 'copy-manifest', 'copy-fonts', 'copy-images', 'copy-js', 'bundle:app', 'sass', 'build:server']);
+    runSequence('clean', ['copy:all', 'bundle:app', 'sass', 'build:server']);
 });
 
 gulp.task('serve', function () {
     isWatchify = true;
-    runSequence('clean', ['copy-html', 'copy-manifest', 'copy-fonts', 'copy-images', 'copy-js', 'bundle:app', 'sass', 'build:server'], ['start:server', 'watch']);
+    runSequence('clean', ['copy:all', 'bundle:app', 'sass', 'build:server'], ['start:server', 'watch']);
 });
