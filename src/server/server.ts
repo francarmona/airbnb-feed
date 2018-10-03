@@ -38,7 +38,7 @@ export default class Server {
         res.json(data);
       }, (error) => {
         let rawHouses = fs.readFileSync('./dist/server/houses.json');
-        res.json(JSON.parse(rawHouses));
+        res.json(JSON.parse(rawHouses.toString()));
       });
     });
 

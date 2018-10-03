@@ -1,4 +1,4 @@
-import * as request from 'request';
+let request = require('request');
 import { CONFIG } from './config';
 
 export default class Feeder {
@@ -21,7 +21,7 @@ export default class Feeder {
       const opts = {
         url: `${CONFIG.apiUrl}/api/v1/houses`,
         json:true
-      }
+      };
       request(opts, (error, response, body) => {
         if(!error && response.statusCode == 200){
           resolve(body);

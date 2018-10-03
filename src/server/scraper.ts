@@ -1,6 +1,5 @@
-import * as cheerio from 'cheerio';
-import * as request from 'request';
 import * as fs from 'fs';
+const phantom = require('phantom');
 
 interface IHouse {
   image: string;
@@ -20,29 +19,32 @@ export default class Scraper {
   }
 
   public getHouses(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      request(`${AIRBNB_URL}/s/homes`, (error, response, body) => {
-        if(!error && response.statusCode == 200){
-          const $ = cheerio.load(body);
-          $('._1mpo9ida', '._fhph4u').each((i, element) => {
-            const piece = $('a._15ns6vh > div',element);
-            this.houses.push({
-              link: `${AIRBNB_URL}${$('div._1szwzht a',element).prop('href')}`,
-              image: $('div._1fdzqn44',element).prop('style')['background-image'].replace('url(','').replace(')',''),
-              title: piece.eq(0).find('div div span').text().replace(' ·  · ',''),
-              subtitle: piece.eq(1).find('._1qp0hqb').text(),
-              price: piece.eq(2).find('div._1yarz4r').html(),
-              price: `${piece.eq(2).find('div._1yarz4r span div._36rlri > span._hylizj6').text()} ${piece.eq(2).find('div._1yarz4r > span > span').eq(0).children().eq(1).children().eq(0).children().eq(1).text()} ${piece.eq(2).find('div._1yarz4r > span').children().eq(1).text().toLowerCase()}`
+    return (async () => {
+        const instance = await phantom.create();
+        const page = await instance.createPage();
+        const status = await page.open(`${AIRBNB_URL}/s/plus_homes`);
+
+        this.houses = await page.evaluate((airbnbUrl) => {
+            let houses = [];
+            const elements = Array.prototype.slice.call(document.querySelectorAll('._fhph4u > div._1jqsr8vu'));
+            elements.forEach((element) => {
+                houses.push({
+                    link: `${airbnbUrl}${element.querySelector('div._1szwzht a').getAttribute('href')}`,
+                    image: element.querySelector('div._1df8dftk').style.backgroundImage.replace('url(','').replace(')',''),
+                    title: element.querySelector('._jnrahhr').innerHTML,
+                    subtitle: '',
+                    price: element.querySelector('div._ncmdki > div._1yarz4r').innerText.replace('Precio', '')
+                });
             });
-          });
-          fs.writeFile('./dist/server/houses.json', JSON.stringify(this.houses));
-          resolve(this.houses);
-        } else {
-          let rawHouses = fs.readFileSync('./dist/server/houses.json');
-          resolve(JSON.parse(rawHouses));
-        }
-      });
-    });
+            return houses;
+        }, AIRBNB_URL);
+
+        fs.writeFile('./dist/server/houses.json', JSON.stringify(this.houses), (err) => {
+            if (err) throw err;
+            console.log('Houses saved!');
+        });
+        return this.houses;
+    })();
   }
 
 }

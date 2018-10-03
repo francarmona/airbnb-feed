@@ -1,7 +1,7 @@
 # Airbnb feed
 A basic *offline first* airbnb feed made by scraping https://www.airbnb.es/s/homes, taking data out and serving it with a node express API.
 
-Demo: [Airbnb feed](https://fcarmona.com).
+Demo: [Airbnb feed](https://airbnb-feed.fcarmona.com).
 
 ![Airbnb feed demo picture](http://i64.tinypic.com/2isia35.png)
 
@@ -10,7 +10,7 @@ Demo: [Airbnb feed](https://fcarmona.com).
 * Offline first web app.
 * Fully responsive.
 * Build with Gulp.
-* Web scraping with [Cheerio](https://github.com/cheeriojs/cheerio).
+* Web scraping with [PhantomJS](http://http://phantomjs.org/).
 * Material design with [Materialize](http://materializecss.com/).
 * API with Node Express.
 * Add to home screen feature (manifest.json).
