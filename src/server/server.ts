@@ -34,12 +34,23 @@ export default class Server {
 
     this.router.get('/api/v1/houses', function(req, res) {
       const scraper = new Scraper();
-      scraper.getHouses().then((data) => {
-        res.json(data);
-      }, (error) => {
-        let rawHouses = fs.readFileSync('./dist/server/houses.json');
-        res.json(JSON.parse(rawHouses.toString()));
-      });
+      let rawHouses = fs.readFileSync('./dist/server/houses.json');
+      let houses = JSON.parse(rawHouses.toString());
+      if(houses.length > 0) {
+        res.json(houses);
+        scraper.getHouses()
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        scraper.getHouses().then((data) => {
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log(error);
+          res.json(houses);
+        });
+      }
     });
 
     this.express.use('/js', express.static('./dist/public/js', staticOptions));
